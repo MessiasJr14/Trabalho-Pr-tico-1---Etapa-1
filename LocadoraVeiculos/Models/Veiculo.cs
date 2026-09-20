@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LocadoraVeiculos.Models
@@ -12,8 +13,10 @@ namespace LocadoraVeiculos.Models
         [MaxLength(80)]
         public string? Modelo { get; set; }
 
+        [Range(1950, 2100)]
         public int AnoFabricacao { get; set; }
 
+        [Range(0, int.MaxValue)]
         public int Quilometragem { get; set; }
 
         [Required]
@@ -27,14 +30,17 @@ namespace LocadoraVeiculos.Models
 
         public int FabricanteId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("FabricanteId")]
         public Fabricante? Fabricante { get; set; }
 
         public int CategoriaId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("CategoriaId")]
         public Categoria? Categoria { get; set; }
 
+        [JsonIgnore]
         public ICollection<Aluguel> Alugueis { get; set; } = new List<Aluguel>();
     }
 }

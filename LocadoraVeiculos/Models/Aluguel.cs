@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LocadoraVeiculos.Models
 {
@@ -10,11 +11,13 @@ namespace LocadoraVeiculos.Models
 
         public int ClienteId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("ClienteId")]
         public Cliente? Cliente { get; set; }
 
         public int VeiculoId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("VeiculoId")]
         public Veiculo? Veiculo { get; set; }
 

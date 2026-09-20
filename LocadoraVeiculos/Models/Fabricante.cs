@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace LocadoraVeiculos.Models
 {
@@ -14,6 +15,7 @@ namespace LocadoraVeiculos.Models
         [MaxLength(60)]
         public string? PaisOrigem { get; set; }
 
+        [JsonIgnore]
         public ICollection<Veiculo> Veiculos { get; set; } = new List<Veiculo>();
     }
 }

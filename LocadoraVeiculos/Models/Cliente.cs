@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace LocadoraVeiculos.Models
 {
@@ -26,6 +27,7 @@ namespace LocadoraVeiculos.Models
         [MaxLength(11)]
         public string? Cnh { get; set; }
 
+        [JsonIgnore]
         public ICollection<Aluguel> Alugueis { get; set; } = new List<Aluguel>();
     }
 }
