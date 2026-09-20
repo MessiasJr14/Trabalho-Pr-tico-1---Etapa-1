@@ -35,6 +35,15 @@ que mapeia essas classes para o **SQL Server Express** usando o **Entity Framewo
 | **1.4** Classes de entidade em C# | Pasta [`Models/`](LocadoraVeiculos/Models) |
 | **1.5** No mínimo 5 entidades | **6 entidades**: Fabricante, Veículo, Cliente, Aluguel + **Categoria** e **Pagamento** |
 
+### Critérios de avaliação → onde conferir
+
+| Critério | Onde conferir |
+|---|---|
+| Modelagem de entidades na camada Model | [`Veiculo.cs`](LocadoraVeiculos/Models/Veiculo.cs), [`Fabricante.cs`](LocadoraVeiculos/Models/Fabricante.cs), [`Cliente.cs`](LocadoraVeiculos/Models/Cliente.cs), [`Aluguel.cs`](LocadoraVeiculos/Models/Aluguel.cs) (+ [`Categoria.cs`](LocadoraVeiculos/Models/Categoria.cs) e [`Pagamento.cs`](LocadoraVeiculos/Models/Pagamento.cs)) |
+| Definição de chaves primárias | Propriedade `Id` com `[Key]` em todas as entidades, confirmada com `HasKey` no `ApplicationContext` |
+| Definição de chaves estrangeiras | `FabricanteId` e `CategoriaId` em `Veiculo`; `ClienteId` e `VeiculoId` em `Aluguel`; `AluguelId` em `Pagamento` — todas com `[ForeignKey]` e `HasOne().WithMany().HasForeignKey()` |
+| Configuração da classe `ApplicationContext` | [`Data/ApplicationContext.cs`](LocadoraVeiculos/Data/ApplicationContext.cs) (`DbSet`s + `OnModelCreating`) registrada com `UseSqlServer` no [`Program.cs`](LocadoraVeiculos/Program.cs) |
+
 ## 4. Modelo conceitual (DER)
 
 ![Modelo conceitual da locadora de veículos](docs/modelo-conceitual.png)
