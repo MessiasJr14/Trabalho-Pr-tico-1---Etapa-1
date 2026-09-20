@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LocadoraVeiculos.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20260920204926_CriacaoInicial")]
-    partial class CriacaoInicial
+    [Migration("20260920212815_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,26 +39,17 @@ namespace LocadoraVeiculos.Migrations
                     b.Property<DateTime?>("DataDevolucao")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DataFimPrevista")
+                    b.Property<DateTime>("DataFim")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataInicio")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("QuilometragemFinal")
                         .HasColumnType("int");
 
                     b.Property<int>("QuilometragemInicial")
                         .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("ValorDiaria")
                         .HasColumnType("decimal(10,2)");
@@ -73,28 +64,9 @@ namespace LocadoraVeiculos.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.HasIndex(new[] { "VeiculoId" }, "IX_Alugueis_VeiculoId");
+                    b.HasIndex("VeiculoId");
 
-                    b.HasIndex(new[] { "VeiculoId" }, "UX_Alugueis_VeiculoId_EmAndamento")
-                        .IsUnique()
-                        .HasFilter("[Status] = 'EmAndamento'");
-
-                    b.ToTable("Alugueis", t =>
-                        {
-                            t.HasCheckConstraint("CK_Alugueis_DataDevolucao", "[DataDevolucao] IS NULL OR [DataDevolucao] >= [DataInicio]");
-
-                            t.HasCheckConstraint("CK_Alugueis_Periodo", "[DataFimPrevista] > [DataInicio]");
-
-                            t.HasCheckConstraint("CK_Alugueis_QuilometragemFinal", "[QuilometragemFinal] IS NULL OR [QuilometragemFinal] >= [QuilometragemInicial]");
-
-                            t.HasCheckConstraint("CK_Alugueis_QuilometragemInicial", "[QuilometragemInicial] >= 0");
-
-                            t.HasCheckConstraint("CK_Alugueis_Status", "[Status] IN ('EmAndamento', 'Finalizado', 'Cancelado')");
-
-                            t.HasCheckConstraint("CK_Alugueis_ValorDiaria", "[ValorDiaria] > 0");
-
-                            t.HasCheckConstraint("CK_Alugueis_ValorTotal", "[ValorTotal] >= 0");
-                        });
+                    b.ToTable("Alugueis");
                 });
 
             modelBuilder.Entity("LocadoraVeiculos.Models.Categoria", b =>
@@ -114,18 +86,12 @@ namespace LocadoraVeiculos.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<decimal>("ValorDiariaBase")
+                    b.Property<decimal>("ValorDiaria")
                         .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Nome")
-                        .IsUnique();
-
-                    b.ToTable("Categorias", t =>
-                        {
-                            t.HasCheckConstraint("CK_Categorias_ValorDiariaBase", "[ValorDiariaBase] > 0");
-                        });
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("LocadoraVeiculos.Models.Cliente", b =>
@@ -137,20 +103,13 @@ namespace LocadoraVeiculos.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cnh")
-                        .IsRequired()
-                        .HasColumnType("char(11)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Cpf")
                         .IsRequired()
-                        .HasColumnType("char(11)");
-
-                    b.Property<DateTime>("DataCadastro")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateOnly>("DataNascimento")
-                        .HasColumnType("date");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -168,21 +127,13 @@ namespace LocadoraVeiculos.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Cnh")
-                        .IsUnique();
-
                     b.HasIndex("Cpf")
                         .IsUnique();
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Clientes", t =>
-                        {
-                            t.HasCheckConstraint("CK_Clientes_Cnh", "LEN([Cnh]) = 11 AND [Cnh] NOT LIKE '%[^0-9]%'");
-
-                            t.HasCheckConstraint("CK_Clientes_Cpf", "LEN([Cpf]) = 11 AND [Cpf] NOT LIKE '%[^0-9]%'");
-                        });
+                    b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("LocadoraVeiculos.Models.Fabricante", b =>
@@ -204,46 +155,7 @@ namespace LocadoraVeiculos.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Nome")
-                        .IsUnique();
-
                     b.ToTable("Fabricantes");
-                });
-
-            modelBuilder.Entity("LocadoraVeiculos.Models.Pagamento", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AluguelId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DataPagamento")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("FormaPagamento")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AluguelId");
-
-                    b.ToTable("Pagamentos", t =>
-                        {
-                            t.HasCheckConstraint("CK_Pagamentos_FormaPagamento", "[FormaPagamento] IN ('Dinheiro', 'CartaoCredito', 'CartaoDebito', 'Pix')");
-
-                            t.HasCheckConstraint("CK_Pagamentos_Valor", "[Valor] > 0");
-                        });
                 });
 
             modelBuilder.Entity("LocadoraVeiculos.Models.Veiculo", b =>
@@ -264,6 +176,9 @@ namespace LocadoraVeiculos.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<bool>("Disponivel")
+                        .HasColumnType("bit");
+
                     b.Property<int>("FabricanteId")
                         .HasColumnType("int");
 
@@ -274,15 +189,11 @@ namespace LocadoraVeiculos.Migrations
 
                     b.Property<string>("Placa")
                         .IsRequired()
-                        .HasColumnType("char(7)");
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<int>("Quilometragem")
                         .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -293,16 +204,7 @@ namespace LocadoraVeiculos.Migrations
                     b.HasIndex("Placa")
                         .IsUnique();
 
-                    b.ToTable("Veiculos", t =>
-                        {
-                            t.HasCheckConstraint("CK_Veiculos_AnoFabricacao", "[AnoFabricacao] BETWEEN 1950 AND 2100");
-
-                            t.HasCheckConstraint("CK_Veiculos_Placa", "LEN([Placa]) = 7");
-
-                            t.HasCheckConstraint("CK_Veiculos_Quilometragem", "[Quilometragem] >= 0");
-
-                            t.HasCheckConstraint("CK_Veiculos_Status", "[Status] IN ('Disponivel', 'Alugado', 'EmManutencao')");
-                        });
+                    b.ToTable("Veiculos");
                 });
 
             modelBuilder.Entity("LocadoraVeiculos.Models.Aluguel", b =>
@@ -324,17 +226,6 @@ namespace LocadoraVeiculos.Migrations
                     b.Navigation("Veiculo");
                 });
 
-            modelBuilder.Entity("LocadoraVeiculos.Models.Pagamento", b =>
-                {
-                    b.HasOne("LocadoraVeiculos.Models.Aluguel", "Aluguel")
-                        .WithMany("Pagamentos")
-                        .HasForeignKey("AluguelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Aluguel");
-                });
-
             modelBuilder.Entity("LocadoraVeiculos.Models.Veiculo", b =>
                 {
                     b.HasOne("LocadoraVeiculos.Models.Categoria", "Categoria")
@@ -352,11 +243,6 @@ namespace LocadoraVeiculos.Migrations
                     b.Navigation("Categoria");
 
                     b.Navigation("Fabricante");
-                });
-
-            modelBuilder.Entity("LocadoraVeiculos.Models.Aluguel", b =>
-                {
-                    b.Navigation("Pagamentos");
                 });
 
             modelBuilder.Entity("LocadoraVeiculos.Models.Categoria", b =>
