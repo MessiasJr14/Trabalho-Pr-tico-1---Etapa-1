@@ -16,10 +16,23 @@ namespace LocadoraVeiculos.Controllers
             _context = context;
         }
 
+        // GET api/fabricantes?nome=volks&paisOrigem=alem
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Fabricante>>> GetFabricantes()
+        public async Task<ActionResult<IEnumerable<Fabricante>>> GetFabricantes(string? nome, string? paisOrigem)
         {
-            return await _context.Fabricantes.ToListAsync();
+            var consulta = _context.Fabricantes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                consulta = consulta.Where(f => f.Nome!.Contains(nome));
+            }
+
+            if (!string.IsNullOrWhiteSpace(paisOrigem))
+            {
+                consulta = consulta.Where(f => f.PaisOrigem!.Contains(paisOrigem));
+            }
+
+            return await consulta.OrderBy(f => f.Nome).ToListAsync();
         }
 
         [HttpGet("{id}")]
