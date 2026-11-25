@@ -16,10 +16,28 @@ namespace LocadoraVeiculos.Controllers
             _context = context;
         }
 
+        // GET api/clientes?nome=maria&cpf=123&email=gmail
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes(string? nome, string? cpf, string? email)
         {
-            return await _context.Clientes.ToListAsync();
+            var consulta = _context.Clientes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                consulta = consulta.Where(c => c.Nome!.Contains(nome));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cpf))
+            {
+                consulta = consulta.Where(c => c.Cpf!.Contains(cpf));
+            }
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                consulta = consulta.Where(c => c.Email!.Contains(email));
+            }
+
+            return await consulta.OrderBy(c => c.Nome).ToListAsync();
         }
 
         [HttpGet("{id}")]
