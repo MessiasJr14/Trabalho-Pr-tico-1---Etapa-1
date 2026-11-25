@@ -16,10 +16,39 @@ namespace LocadoraVeiculos.Controllers
             _context = context;
         }
 
+        // GET api/veiculos?modelo=cor&placa=ABC&fabricanteId=1&categoriaId=2&disponivel=true
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Veiculo>>> GetVeiculos()
+        public async Task<ActionResult<IEnumerable<Veiculo>>> GetVeiculos(string? modelo, string? placa,
+            int? fabricanteId, int? categoriaId, bool? disponivel)
         {
-            return await _context.Veiculos.ToListAsync();
+            var consulta = _context.Veiculos.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(modelo))
+            {
+                consulta = consulta.Where(v => v.Modelo!.Contains(modelo));
+            }
+
+            if (!string.IsNullOrWhiteSpace(placa))
+            {
+                consulta = consulta.Where(v => v.Placa!.Contains(placa));
+            }
+
+            if (fabricanteId.HasValue)
+            {
+                consulta = consulta.Where(v => v.FabricanteId == fabricanteId.Value);
+            }
+
+            if (categoriaId.HasValue)
+            {
+                consulta = consulta.Where(v => v.CategoriaId == categoriaId.Value);
+            }
+
+            if (disponivel.HasValue)
+            {
+                consulta = consulta.Where(v => v.Disponivel == disponivel.Value);
+            }
+
+            return await consulta.OrderBy(v => v.Modelo).ToListAsync();
         }
 
         [HttpGet("{id}")]
