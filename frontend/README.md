@@ -2,6 +2,8 @@
 
 Front-end em **HTML, CSS, JavaScript e Bootstrap 5** que consome, com `fetch`, a API ASP.NET Core do Trabalho Prático 1 (pasta `LocadoraVeiculos`).
 
+Wireframes (Figma): https://www.figma.com/design/ybkGZkIKNNctWBVLNxq5D5/TP2---Locadora-de-Ve%C3%ADculos---Wireframes · imagens em [`../wireframes`](../wireframes)
+
 ## Telas
 
 | Tela | Arquivo | Rotas usadas |
