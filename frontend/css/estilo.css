@@ -1,0 +1,49 @@
+body {
+    background-color: #f4f5f7;
+    min-height: 100vh;
+}
+
+.navbar .nav-link.active {
+    font-weight: 600;
+    border-bottom: 2px solid #fff;
+}
+
+.card {
+    border: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #555;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.card-indicador .valor {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.card-indicador .icone {
+    font-size: 2rem;
+    opacity: 0.35;
+}
+
+.rota {
+    font-family: Consolas, monospace;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.acoes {
+    width: 1%;
+    white-space: nowrap;
+}
