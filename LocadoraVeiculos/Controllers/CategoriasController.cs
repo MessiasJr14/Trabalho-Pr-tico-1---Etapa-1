@@ -16,10 +16,28 @@ namespace LocadoraVeiculos.Controllers
             _context = context;
         }
 
+        // GET api/categorias?nome=suv&valorMin=100&valorMax=300
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias(string? nome, decimal? valorMin, decimal? valorMax)
         {
-            return await _context.Categorias.ToListAsync();
+            var consulta = _context.Categorias.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                consulta = consulta.Where(c => c.Nome!.Contains(nome));
+            }
+
+            if (valorMin.HasValue)
+            {
+                consulta = consulta.Where(c => c.ValorDiaria >= valorMin.Value);
+            }
+
+            if (valorMax.HasValue)
+            {
+                consulta = consulta.Where(c => c.ValorDiaria <= valorMax.Value);
+            }
+
+            return await consulta.OrderBy(c => c.Nome).ToListAsync();
         }
 
         [HttpGet("{id}")]
