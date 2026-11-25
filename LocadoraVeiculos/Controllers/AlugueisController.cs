@@ -16,10 +16,44 @@ namespace LocadoraVeiculos.Controllers
             _context = context;
         }
 
+        // GET api/alugueis?clienteId=1&veiculoId=2&status=abertos&dataInicial=2026-11-01&dataFinal=2026-11-30
+        // status: "abertos" (sem devolução) ou "devolvidos"; as datas filtram pela data de início
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Aluguel>>> GetAlugueis()
+        public async Task<ActionResult<IEnumerable<Aluguel>>> GetAlugueis(int? clienteId, int? veiculoId,
+            string? status, DateTime? dataInicial, DateTime? dataFinal)
         {
-            return await _context.Alugueis.ToListAsync();
+            var consulta = _context.Alugueis.AsQueryable();
+
+            if (clienteId.HasValue)
+            {
+                consulta = consulta.Where(a => a.ClienteId == clienteId.Value);
+            }
+
+            if (veiculoId.HasValue)
+            {
+                consulta = consulta.Where(a => a.VeiculoId == veiculoId.Value);
+            }
+
+            if (status == "abertos")
+            {
+                consulta = consulta.Where(a => a.DataDevolucao == null);
+            }
+            else if (status == "devolvidos")
+            {
+                consulta = consulta.Where(a => a.DataDevolucao != null);
+            }
+
+            if (dataInicial.HasValue)
+            {
+                consulta = consulta.Where(a => a.DataInicio >= dataInicial.Value.Date);
+            }
+
+            if (dataFinal.HasValue)
+            {
+                consulta = consulta.Where(a => a.DataInicio < dataFinal.Value.Date.AddDays(1));
+            }
+
+            return await consulta.OrderByDescending(a => a.DataInicio).ToListAsync();
         }
 
         [HttpGet("{id}")]
